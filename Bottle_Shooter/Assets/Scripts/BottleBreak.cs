@@ -2,38 +2,51 @@ using UnityEngine;
 
 public class BottleBreak : MonoBehaviour
 {
+    [Header("Fractured Bottle Setup")]
     public GameObject fracturedBottlePrefab;
+
+    [Header("Break Effects")]
     public AudioClip breakSound;
+    public float explosionForce = 500f;
+    public float explosionRadius = 2f;
+    public float upwardsModifier = 0.2f;
+
+    [Header("Cleanup")]
+    public float destroyAfterSeconds = 5f;
+
+    private bool hasBroken = false;
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.relativeVelocity.magnitude > 2f) // Adjust threshold
+        // Prevent multiple breaks & check impact force
+        if (!hasBroken && collision.relativeVelocity.magnitude > 2f)
         {
+            hasBroken = true;
             BreakBottle();
         }
     }
 
-    void BreakBottle()
+    private void BreakBottle()
     {
-        // Spawn fractured bottle
+        // Instantiate fractured bottle at same position and rotation
         GameObject fractured = Instantiate(fracturedBottlePrefab, transform.position, transform.rotation);
 
-        // Add explosion force to pieces
+        // Apply explosion force to all pieces with Rigidbody
         foreach (Rigidbody rb in fractured.GetComponentsInChildren<Rigidbody>())
         {
-            rb.AddExplosionForce(500f, transform.position, 3f);
+            rb.AddExplosionForce(explosionForce, transform.position, explosionRadius, upwardsModifier, ForceMode.Impulse);
         }
 
-        // Play breaking sound
-        if (breakSound!=null)
+        // Play break sound at position
+        if (breakSound != null)
         {
             AudioSource.PlayClipAtPoint(breakSound, transform.position);
         }
 
-        // Destroy fractured pieces after 5 seconds
-        Destroy(fractured, 5f);
+        // Destroy fractured bottle after some time
+        Destroy(fractured, destroyAfterSeconds);
 
-        // Destroy original bottle
+        // Destroy the original bottle
         Destroy(gameObject);
     }
 }
