@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9dcba7a791bd63c4c8eb40ca6d973ddd
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - mainCamera: {instanceID: 0}
+  - hitEffectPrefab: {fileID: 1013274939826982, guid: 44c3dc2926c32de4286699645b120df7, type: 3}
+  - ammoText: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
