@@ -1,7 +1,7 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class BottleManager : MonoBehaviour
 {
@@ -26,23 +26,21 @@ public class BottleManager : MonoBehaviour
         if (!levelCompleted && AreAllBottlesDestroyed())
         {
             levelCompleted = true;
-            ShowPanel();
+            StartCoroutine(ShowPanelWithDelay(1.5f)); // Call coroutine with 2 sec delay
         }
     }
 
-    //void ShowPanel()
-    //{
-    //    winPanel.SetActive(true);
-    //    audioSource.Play();
-    //    Time.timeScale = 0f; // pause game while showing win panel
-    //}
+    IEnumerator ShowPanelWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay); // wait 2 seconds
+        ShowPanel();
+    }
+
     void ShowPanel()
     {
         winPanel.SetActive(true);
         audioSource.Play();
-       
     }
-
 
     bool AreAllBottlesDestroyed()
     {
@@ -54,14 +52,15 @@ public class BottleManager : MonoBehaviour
         return true;
     }
 
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
     public void LoadNextLevel()
     {
-        Time.timeScale = 1f; // resume time
-        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
-        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
-            SceneManager.LoadScene(nextSceneIndex);
-        else
-            Debug.Log("No more levels!");
+        Debug.Log("Next Level button clicked");
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Level2");
     }
 }
-

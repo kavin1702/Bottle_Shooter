@@ -73,7 +73,7 @@ public class BottleGunController : MonoBehaviour
                     bottle.SendMessage("BreakBottle");
                 }
             }
-        }
+        } 
     }
 
     System.Collections.IEnumerator Reload()
