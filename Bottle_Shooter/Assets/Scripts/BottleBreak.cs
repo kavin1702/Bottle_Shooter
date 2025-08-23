@@ -28,25 +28,25 @@ public class BottleBreak : MonoBehaviour
 
     private void BreakBottle()
     {
-        // Instantiate fractured bottle at same position and rotation
+      
         GameObject fractured = Instantiate(fracturedBottlePrefab, transform.position, transform.rotation);
 
-        // Apply explosion force to all pieces with Rigidbody
+     
         foreach (Rigidbody rb in fractured.GetComponentsInChildren<Rigidbody>())
         {
             rb.AddExplosionForce(explosionForce, transform.position, explosionRadius, upwardsModifier, ForceMode.Impulse);
         }
 
-        // Play break sound at position
+       
         if (breakSound != null)
         {
             AudioSource.PlayClipAtPoint(breakSound, transform.position);
         }
 
-        // Destroy fractured bottle after some time
+        
         Destroy(fractured, destroyAfterSeconds);
 
-        // Destroy the original bottle
+       
         Destroy(gameObject);
     }
 }
