@@ -26,7 +26,7 @@ public class BottleManager : MonoBehaviour
         if (!levelCompleted && AreAllBottlesDestroyed())
         {
             levelCompleted = true;
-            StartCoroutine(ShowPanelWithDelay(1.5f)); // Call coroutine with 2 sec delay
+            StartCoroutine(ShowPanelWithDelay(1.5f)); // Call coroutine with 1.5sec delay
         }
     }
 

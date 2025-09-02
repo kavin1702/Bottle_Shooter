@@ -1,120 +1,74 @@
-﻿////using UnityEngine;
-////using UnityEngine.SceneManagement;
-
-////public class GameManager : MonoBehaviour
-////{
-////    [Header("UI Panels")]
-////    public GameObject youWonPanel;
-////    public GameObject gameOverPanel;
-
-////    [Header("Level Settings")]
-////    public int startingAmmo = 6;   // 👈 Level 1 setting
-////    public int bottlesToWin = 3;
-
-////    private int bottlesShot = 0;
-
-////    void Start()
-////    {
-////        if (youWonPanel) youWonPanel.SetActive(false);
-////        if (gameOverPanel) gameOverPanel.SetActive(false);
-////    }
-
-////    public int GetStartingAmmo()
-////    {
-////        return startingAmmo;
-////    }
-
-////    public void OnBulletFired(int currentAmmo)
-////    {
-////        if (currentAmmo <= 0 && bottlesShot == 0)
-////        {
-////            GameOver();
-////        }
-////    }
-
-////    public void OnBottleShot()
-////    {
-////        bottlesShot++;
-////        if (bottlesShot >= bottlesToWin)
-////        {
-////            YouWon();
-////        }
-////    }
-
-////    void YouWon()
-////    {
-////        if (youWonPanel) youWonPanel.SetActive(true);
-////        Time.timeScale = 0f;
-////    }
-
-////    void GameOver()
-////    {
-////        if (gameOverPanel) gameOverPanel.SetActive(true);
-////        Time.timeScale = 0f;
-////    }
-////    public void ReloadScene()
-////    {
-////        Time.timeScale = 1f; // reset time scale before reload
-////        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-////    }
-
-////}
+﻿
 //using UnityEngine;
 //using UnityEngine.SceneManagement;
 //using UnityEngine.UI;
 //using System.Collections;
+//using TMPro;
 
 //public class GameManager : MonoBehaviour
 //{
 //    [Header("UI Panels")]
-//    public GameObject youWonPanel;
-//    public GameObject gameOverPanel;
-//    public GameObject winPanel; // when all bottles destroyed
+//    public GameObject youWonPanel;    // shows when enough bottles are hit
+//    public GameObject gameOverPanel;  // shows when time ends or ammo ends
 //    public AudioSource audioSource;
-//    public Button nextLevelButton; // 🎯 Assign in inspector
+//    public Button nextLevelButton;    // assign in inspector (only level 1)
+//    public Button replayButton;       // assign in inspector
 
 //    [Header("Level Settings")]
-//    public int startingAmmo = 6;   // 👈 Level 1 ammo
-//    public int bottlesToWin = 3;   // win by shooting X bottles
+//    public int startingAmmo = 6;      // bullets per level
+//    public int bottlesToWin = 3;      // Level1 = 3, Level2 = 4
+//    public float levelTime = 10f;     // Level1 = 10, Level2 = 30
 
-//    private int bottlesShot = 0;
-//    private bool levelCompleted = false;
-//    private GameObject[] bottles;
+//    [Header("UI Elements")]
+//    public TextMeshProUGUI timerText; // assign in inspector
+
+//    public  int bottlesShot = 0;
+//    private int currentAmmo;
+//    private bool gameEnded = false;
+//    private float remainingTime;
 
 //    void Start()
 //    {
-//        // Bottle setup
-//        bottles = GameObject.FindGameObjectsWithTag("Bottle");
-//        if (winPanel) winPanel.SetActive(false);
+//        currentAmmo = startingAmmo;
+//        remainingTime = levelTime;
 
+//        // Hide panels initially
+//        if (youWonPanel) youWonPanel.SetActive(false);
+//        if (gameOverPanel) gameOverPanel.SetActive(false);
+
+//        // Button listeners
 //        if (nextLevelButton != null)
 //            nextLevelButton.onClick.AddListener(LoadNextLevel);
 
-//        // Panels setup
-//        if (youWonPanel) youWonPanel.SetActive(false);
-//        if (gameOverPanel) gameOverPanel.SetActive(false);
+//        if (replayButton != null)
+//            replayButton.onClick.AddListener(ReloadScene);
 //    }
 
 //    void Update()
 //    {
-//        // Check if all bottles destroyed (old BottleManager logic)
-//        if (!levelCompleted && AreAllBottlesDestroyed())
+//        if (gameEnded) return;
+
+//        // Countdown timer
+//        remainingTime -= Time.deltaTime;
+//        if (timerText != null)
+//            timerText.text = "Time: " + Mathf.CeilToInt(remainingTime).ToString();
+
+//        // Time’s up
+//        if (remainingTime <= 0f && bottlesShot < bottlesToWin)
 //        {
-//            levelCompleted = true;
-//            StartCoroutine(ShowPanelWithDelay(1.5f));
+//            GameOver();
 //        }
 //    }
 
-//    // ----------- AMMO & BOTTLE WIN/LOSE LOGIC -----------
+//    // ----------- BULLET & BOTTLE EVENTS -----------
 
-//    public int GetStartingAmmo()
+//    public void OnBulletFired()
 //    {
-//        return startingAmmo;
-//    }
+//        if (gameEnded) return;
 
-//    public void OnBulletFired(int currentAmmo)
-//    {
-//        if (currentAmmo <= 0 && bottlesShot == 0)
+//        currentAmmo--;
+
+//        if (currentAmmo <= 0 && bottlesShot < bottlesToWin)
 //        {
 //            GameOver();
 //        }
@@ -122,96 +76,100 @@
 
 //    public void OnBottleShot()
 //    {
+//        if (gameEnded) return;
+
 //        bottlesShot++;
+
 //        if (bottlesShot >= bottlesToWin)
 //        {
-//            YouWon();
+//            StartCoroutine(ShowWinWithDelay(1f));
 //        }
+//    }
+
+//    IEnumerator ShowWinWithDelay(float delay)
+//    {
+//        yield return new WaitForSeconds(delay);
+//        YouWon();
 //    }
 
 //    // ----------- WIN / LOSE METHODS -----------
 
 //    void YouWon()
 //    {
+//        if (gameEnded) return;
+
+//        gameEnded = true;
 //        if (youWonPanel) youWonPanel.SetActive(true);
+//        if (audioSource) audioSource.Play();
+
 //        Time.timeScale = 0f;
 //    }
 
 //    void GameOver()
 //    {
+//        if (gameEnded) return;
+
+//        gameEnded = true;
 //        if (gameOverPanel) gameOverPanel.SetActive(true);
+
 //        Time.timeScale = 0f;
-//    }
-
-//    // ----------- BOTTLE DESTROY LOGIC -----------
-
-//    IEnumerator ShowPanelWithDelay(float delay)
-//    {
-//        yield return new WaitForSeconds(delay);
-//        ShowPanel();
-//    }
-
-//    void ShowPanel()
-//    {
-//        if (winPanel) winPanel.SetActive(true);
-//        if (audioSource) audioSource.Play();
-//    }
-
-//    bool AreAllBottlesDestroyed()
-//    {
-//        foreach (GameObject bottle in bottles)
-//        {
-//            if (bottle != null)
-//                return false;
-//        }
-//        return true;
 //    }
 
 //    // ----------- SCENE MANAGEMENT -----------
 
-//    public void BackToMenu()
+//    public void ReloadScene()
 //    {
-//        SceneManager.LoadScene(0);
+//        Time.timeScale = 1f;
+//        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 //    }
 
 //    public void LoadNextLevel()
 //    {
-//        Debug.Log("Next Level button clicked");
 //        Time.timeScale = 1f;
-//        SceneManager.LoadScene("Level2");
+//        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
 //    }
-
-//    public void ReloadScene()
+//    public void ReturnToMainMenu()
 //    {
-//        Time.timeScale = 1f; // reset before reload
-//        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+//        SceneManager.LoadScene("Main_Menu");
+//    }
+//    public int GetRemainingAmmo()
+//    {
+//        return currentAmmo;
 //    }
 //}
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     [Header("UI Panels")]
-    public GameObject youWonPanel;   // shows when 3 bottles are hit
-    public GameObject gameOverPanel; // shows when bullets are over & bottles < 3
+    public GameObject youWonPanel;    // shows when enough bottles are hit
+    public GameObject gameOverPanel;  // shows when time ends or ammo ends
     public AudioSource audioSource;
-    public Button nextLevelButton;   // assign in inspector
-    public Button replayButton;      // assign in inspector
+    public Button nextLevelButton;    // assign in inspector (only level 1)
+    public Button replayButton;       // assign in inspector
 
     [Header("Level Settings")]
-    public int startingAmmo = 6;     // max bullets per level
-    public int bottlesToWin = 3;     // need 3 bottles to win
+    public int startingAmmo = 6;      // bullets per level
+    public int bottlesToWin = 3;      // Level1 = 3, Level2 = 4
+    public float levelTime = 10f;     // Level1 = 10, Level2 = 30
 
-    private int bottlesShot = 0;
+    [Header("UI Elements")]
+    public TextMeshProUGUI timerText;   // assign in inspector
+    public TextMeshProUGUI ammoText;    // NEW: assign in inspector for bullet count
+
+    public int bottlesShot = 0;
     private int currentAmmo;
     private bool gameEnded = false;
+    private float remainingTime;
 
     void Start()
     {
         currentAmmo = startingAmmo;
+        remainingTime = levelTime;
 
         // Hide panels initially
         if (youWonPanel) youWonPanel.SetActive(false);
@@ -223,6 +181,24 @@ public class GameManager : MonoBehaviour
 
         if (replayButton != null)
             replayButton.onClick.AddListener(ReloadScene);
+
+        UpdateAmmoUI(); // initialize bullet UI
+    }
+
+    void Update()
+    {
+        if (gameEnded) return;
+
+        // Countdown timer
+        remainingTime -= Time.deltaTime;
+        if (timerText != null)
+            timerText.text = "Time: " + Mathf.CeilToInt(remainingTime).ToString();
+
+        // Time’s up
+        if (remainingTime <= 0f && bottlesShot < bottlesToWin)
+        {
+            GameOver();
+        }
     }
 
     // ----------- BULLET & BOTTLE EVENTS -----------
@@ -232,8 +208,8 @@ public class GameManager : MonoBehaviour
         if (gameEnded) return;
 
         currentAmmo--;
+        UpdateAmmoUI();
 
-        // Check if out of ammo and not enough bottles shot
         if (currentAmmo <= 0 && bottlesShot < bottlesToWin)
         {
             GameOver();
@@ -248,25 +224,37 @@ public class GameManager : MonoBehaviour
 
         if (bottlesShot >= bottlesToWin)
         {
-            YouWon();
+            StartCoroutine(ShowWinWithDelay(1f));
         }
+    }
+
+    IEnumerator ShowWinWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        YouWon();
     }
 
     // ----------- WIN / LOSE METHODS -----------
 
     void YouWon()
     {
+        if (gameEnded) return;
+
         gameEnded = true;
         if (youWonPanel) youWonPanel.SetActive(true);
         if (audioSource) audioSource.Play();
-        Time.timeScale = 0f; // pause
+
+        Time.timeScale = 0f;
     }
 
     void GameOver()
     {
+        if (gameEnded) return;
+
         gameEnded = true;
         if (gameOverPanel) gameOverPanel.SetActive(true);
-        Time.timeScale = 0f; // pause
+
+        Time.timeScale = 0f;
     }
 
     // ----------- SCENE MANAGEMENT -----------
@@ -279,13 +267,25 @@ public class GameManager : MonoBehaviour
 
     public void LoadNextLevel()
     {
-        Debug.Log("Next Level button clicked");
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene("Main_Menu");
     }
 
     public int GetRemainingAmmo()
     {
         return currentAmmo;
+    }
+
+    // ----------- UI UPDATES -----------
+
+    void UpdateAmmoUI()
+    {
+        if (ammoText != null)
+            ammoText.text = "Bullets: " + currentAmmo.ToString();
     }
 }

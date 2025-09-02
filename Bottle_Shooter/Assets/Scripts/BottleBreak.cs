@@ -16,17 +16,17 @@ public class BottleBreak : MonoBehaviour
 
     private bool hasBroken = false;
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        // Prevent multiple breaks & check impact force
-        if (!hasBroken && collision.relativeVelocity.magnitude > 2f)
-        {
-            hasBroken = true;
-            BreakBottle();
-        }
-    }
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    // Prevent multiple breaks & check impact force
+    //    if (!hasBroken && collision.relativeVelocity.magnitude > 2f)
+    //    {
+    //        hasBroken = true;
+    //        BreakBottle();
+    //    }
+    //}
 
-    private void BreakBottle()
+    public  void BreakBottle()
     {
       
         GameObject fractured = Instantiate(fracturedBottlePrefab, transform.position, transform.rotation);

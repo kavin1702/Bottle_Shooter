@@ -65,6 +65,10 @@ PrefabInstance:
       value: _Bottle_Final
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e47f7c5aae811d04aaa21848c44eb583, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e47f7c5aae811d04aaa21848c44eb583, type: 3}
       propertyPath: m_TagString
       value: Bottle
       objectReference: {fileID: 0}
