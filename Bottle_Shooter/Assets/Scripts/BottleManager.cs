@@ -7,7 +7,7 @@ public class BottleManager : MonoBehaviour
 {
     public GameObject winPanel;
     public AudioSource audioSource;
-    public Button nextLevelButton; // 🎯 Assign this in inspector
+    public Button nextLevelButton; 
 
     private GameObject[] bottles;
     private bool levelCompleted = false;
@@ -26,13 +26,13 @@ public class BottleManager : MonoBehaviour
         if (!levelCompleted && AreAllBottlesDestroyed())
         {
             levelCompleted = true;
-            StartCoroutine(ShowPanelWithDelay(1.5f)); // Call coroutine with 1.5sec delay
+            StartCoroutine(ShowPanelWithDelay(1.5f));
         }
     }
 
     IEnumerator ShowPanelWithDelay(float delay)
     {
-        yield return new WaitForSeconds(delay); // wait 2 seconds
+        yield return new WaitForSeconds(delay);
         ShowPanel();
     }
 

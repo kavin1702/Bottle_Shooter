@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
@@ -8,20 +7,20 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     [Header("UI Panels")]
-    public GameObject youWonPanel;    // shows when enough bottles are hit
-    public GameObject gameOverPanel;  // shows when time ends or ammo ends
+    public GameObject youWonPanel;
+    public GameObject gameOverPanel;
     public AudioSource audioSource;
-    public Button nextLevelButton;    // assign in inspector (only level 1)
-    public Button replayButton;       // assign in inspector
+    public Button nextLevelButton;
+    public Button replayButton;
 
     [Header("Level Settings")]
-    public int startingAmmo = 6;      // bullets per level
-    public int bottlesToWin = 3;      // Level1 = 3, Level2 = 4
-    public float levelTime = 10f;     // Level1 = 10, Level2 = 30
+    public int startingAmmo = 6;
+    public int bottlesToWin = 3;
+    public float levelTime = 10f;
 
     [Header("UI Elements")]
-    public TextMeshProUGUI timerText;   // assign in inspector
-    public TextMeshProUGUI ammoText;    // NEW: assign in inspector for bullet count
+    public TextMeshProUGUI timerText;
+    public TextMeshProUGUI ammoText;
 
     public int bottlesShot = 0;
     private int currentAmmo;
@@ -33,37 +32,31 @@ public class GameManager : MonoBehaviour
         currentAmmo = startingAmmo;
         remainingTime = levelTime;
 
-        // Hide panels initially
         if (youWonPanel) youWonPanel.SetActive(false);
         if (gameOverPanel) gameOverPanel.SetActive(false);
 
-        // Button listeners
         if (nextLevelButton != null)
             nextLevelButton.onClick.AddListener(LoadNextLevel);
 
         if (replayButton != null)
             replayButton.onClick.AddListener(ReloadScene);
 
-        UpdateAmmoUI(); // initialize bullet UI
+        UpdateAmmoUI();
     }
 
     void Update()
     {
         if (gameEnded) return;
 
-        // Countdown timer
         remainingTime -= Time.deltaTime;
         if (timerText != null)
             timerText.text = "Time: " + Mathf.CeilToInt(remainingTime).ToString();
 
-        // Time’s up
         if (remainingTime <= 0f && bottlesShot < bottlesToWin)
         {
             GameOver();
         }
     }
-
-    // ----------- BULLET & BOTTLE EVENTS -----------
 
     public void OnBulletFired()
     {
@@ -96,8 +89,6 @@ public class GameManager : MonoBehaviour
         YouWon();
     }
 
-    // ----------- WIN / LOSE METHODS -----------
-
     void YouWon()
     {
         if (gameEnded) return;
@@ -118,8 +109,6 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 0f;
     }
-
-    // ----------- SCENE MANAGEMENT -----------
 
     public void ReloadScene()
     {
@@ -142,8 +131,6 @@ public class GameManager : MonoBehaviour
     {
         return currentAmmo;
     }
-
-    // ----------- UI UPDATES -----------
 
     void UpdateAmmoUI()
     {

@@ -15,17 +15,6 @@ public class BottleBreak : MonoBehaviour
     public float destroyAfterSeconds = 5f;
 
     private bool hasBroken = false;
-
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    // Prevent multiple breaks & check impact force
-    //    if (!hasBroken && collision.relativeVelocity.magnitude > 2f)
-    //    {
-    //        hasBroken = true;
-    //        BreakBottle();
-    //    }
-    //}
-
     public  void BreakBottle()
     {
       

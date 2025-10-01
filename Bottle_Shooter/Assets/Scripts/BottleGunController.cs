@@ -1,7 +1,4 @@
-﻿
-
-
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BottleGunController : MonoBehaviour
 {
@@ -14,10 +11,10 @@ public class BottleGunController : MonoBehaviour
     [Header("Raycast Info")]
     public Camera mainCamera;
     public float range = 100f;
-    public LayerMask bottleLayer;   // 👈 Assign the "Bottle" layer in the Inspector
+    public LayerMask bottleLayer;
 
     [Header("Ammo")]
-    public int currentAmmo = 6;   // start with 6 bullets
+    public int currentAmmo = 6;
     public float fireRate = 0.2f;
     private float nextFireTime = 0f;
 
@@ -40,22 +37,20 @@ public class BottleGunController : MonoBehaviour
     void Shoot()
     {
         currentAmmo--;
-        gameManager.OnBulletFired(); // 👈 Notify GameManager (reduce ammo UI etc.)
+        gameManager.OnBulletFired();
 
-        // Gun FX
         if (gunAnimator) gunAnimator.SetTrigger("Shoot");
         if (muzzleFlash) muzzleFlash.Play();
         if (shootAudio && shootClip) shootAudio.PlayOneShot(shootClip);
 
-        // Raycast ONLY on Bottle layer
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         if (Physics.Raycast(ray, out RaycastHit hit, range, bottleLayer))
         {
             BottleBreak bottle = hit.collider.GetComponent<BottleBreak>();
             if (bottle != null)
             {
-                bottle.BreakBottle();      // call public method directly
-                gameManager.OnBottleShot(); // increase score
+                bottle.BreakBottle();
+                gameManager.OnBottleShot();
             }
         }
     }
